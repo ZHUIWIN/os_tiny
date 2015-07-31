@@ -1,9 +1,9 @@
-typedef struct {
-    int value;
-    int process[10];
-} semaphore;
+/* create by zhui
+ * semaphore.c
+ * 2015.7
+ */
 
-semaphore *mutex,*full,*empty;
+#include "semaphore.h"
 
 void new_semaphore(semaphore **S,int value){
     (*S) = (semaphore *)mymalloc(sizeof(semaphore)/sizeof(int)+1);

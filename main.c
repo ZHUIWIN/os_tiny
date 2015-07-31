@@ -1,8 +1,9 @@
 #include "all.h"
 #include "task.h"
+#include "memory.h"
+#include "semaphore.h"
 
-#include "mem.c"
-#include "semaphore.c"
+
 #include "printf.c"
 #include "alltask.c"
 

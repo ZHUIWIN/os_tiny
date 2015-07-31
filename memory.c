@@ -1,34 +1,9 @@
-#ifdef _MEM_TEST_
-    #include <stdio.h>
-    int MEM[20000];
-    void * listaddr=MEM+5000;
-#endif
+/* create by zhui
+ * memory.c 
+ * 2015.7
+ */
 
-#ifndef _MEM_TEST_
-    extern _end;
-    int *MEM;
-    void * listaddr;
-#endif
-
-struct memory{
-    int available;
-    int blocksize;
-    void * start_addr;
-    void * end_addr;
-};
-struct memory ALL[10];
-
-
-typedef struct Mem_alloced{
-    int * start_addr;
-    int  size;
-    struct mem_alloced * next;
-} mem_alloced;
-
-mem_alloced * using_firstlist;
-mem_alloced * unuse_firstlist;
-mem_alloced * using_lastlist;
-mem_alloced * unuse_lastlist;
+#include "memory.h"
 
 void *  linklistmymalloc(){
     mem_alloced * newlist = listaddr;
