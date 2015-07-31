@@ -1,15 +1,30 @@
-#include "all.h"
-void schedule();
-void period(int id,int time){ 
-    if(ALLTASK[id]->deflag == 1){ //周期性任务创建
-        init_task(id);
-	    create_task(id,myTask4);
-	    ALLTASK[id]->timer = time;
-	}
+/* create by zhui
+ * task.c
+ * 2015.7
+ */
+
+
+#include "task.h"
+
+int init_all(){
+    int i =0;
+    for(i=0;i<MAX_TASK_NUM;i++)
+	init_task(i);
 }
 
-void period_wait(){
-    
+int init_task(int id){
+    int i = 0;
+    for(i=0;i<1024;i++) ALLTASK[id]->taskStack[i] = 0;
+    ALLTASK[id]->taskStack[1023]= 8;
+    ALLTASK[id]->esp = 0;
+    ALLTASK[id]->ebp = 0;
+    ALLTASK[id]->idle = 0;
+    ALLTASK[id]->timer = -1;
+    ALLTASK[id]->period = 0;
+    ALLTASK[id]->priority= 1;
+    ALLTASK[id]->sleeptime = 0;
+    ALLTASK[id]->deflag = 0;
+    ALLTASK[id]->eflag = 0x0202;
 }
 
 
@@ -23,30 +38,29 @@ void create_task(int id,void *func){
      //ALLTASK[id]->taskStack[1021]=0x0202;
      ALLTASK[id]->esp = (unsigned long) &ALLTASK[id]->taskStack[1022];
 }
+
+
+void period(int id,int time){ 
+    if(ALLTASK[id]->deflag == 1){ //周期性任务创建
+		void *func = (void*)ALLTASK[id]->taskStack[1022];
+	    init_task(id);
+	    create_task(id,func);
+	    ALLTASK[id]->timer = time;
+	}
+}
+
+void period_wait(){
+    
+}
+
+
+
 int delay(int time){
     ALLTASK[tasknow]->idle =time;
     schedule();
 }
 
-int init_task(id){
-    int i = 0;
-    for(i=0;i<1024;i++) ALLTASK[id]->taskStack[i] = 0;
-    ALLTASK[id]->taskStack[1023]= 8;
-    ALLTASK[id]->esp = 0;
-    ALLTASK[id]->ebp = 0;
-    ALLTASK[id]->priority= 1;
-    ALLTASK[id]->idle = 0;
-    ALLTASK[id]->timer = -1;
-    ALLTASK[id]->period = 0;
-    ALLTASK[id]->sleeptime = 0;
-    ALLTASK[id]->eflag = 0x0202;
-    ALLTASK[id]->deflag = 0;
-}
 
-int init_all(){
-    int i =0;
-    for(i=0;i<10;i++) init_task(i);
-}
 
 int myswitch(int next_id){
     save_temp();
@@ -78,8 +92,8 @@ int destory_task(){
 
 void schedule(){
     int i = 0;
-    int ready[10];
-    for(i=1;i<10;i++){
+    int ready[MAX_TASK_NUM];
+    for(i=1;i<MAX_TASK_NUM;i++){
         ready[i]=0;
         if( ALLTASK[i]->esp !=0 
             && ALLTASK[i]->idle==0 
@@ -90,7 +104,7 @@ void schedule(){
         }
     }
     
-     for(i=1;i<10;i++){
+     for(i=1;i<MAX_TASK_NUM;i++){
         if(ALLTASK[i]->sleeptime !=0 ) check_sleep_queue(i);
         else delete_sleep_queue(i);
      }
@@ -119,17 +133,17 @@ void schedule(){
  
 }
 
-int RR_Queue[10];
+
 void init_RR_Queue(){
     int i =0;
-    for(i=1;i<10;i++) RR_Queue[i]= 0;
+    for(i=1;i<MAX_TASK_NUM;i++) RR_Queue[i]= 0;
     
 }
 void delete_queue(int id){
     int i =0,j =0;
-    for(j=1;j<10;j++) 
+    for(j=1;j<MAX_TASK_NUM;j++) 
         if(RR_Queue[j] == id) {
-            for(i = j;i<10;i++){
+            for(i = j;i<MAX_TASK_NUM;i++){
                 if(RR_Queue[i+1] != 0) RR_Queue[i]=RR_Queue[i+1];
                 else {
                     RR_Queue[i]=0;
@@ -142,10 +156,10 @@ void delete_queue(int id){
 
 void check_queue(int id){
     int i =0,j=0;
-    for(i=1;i<10;i++) 
+    for(i=1;i<MAX_TASK_NUM;i++) 
         if(RR_Queue[i]== id) break;
-    if(i==10){
-        for(j=1;j<10;j++) 
+    if(i==MAX_TASK_NUM){
+        for(j=1;j<MAX_TASK_NUM;j++) 
             if(RR_Queue[j] == 0 ){
                 RR_Queue[j] = id;
                 break;
@@ -155,7 +169,7 @@ void check_queue(int id){
 
 int next_RR(){
     int next = RR_Queue[1],i = 2;
-    for(i = 1;i<10;i++){
+    for(i = 1;i<MAX_TASK_NUM;i++){
         if(RR_Queue[i+1] != 0) RR_Queue[i]=RR_Queue[i+1];
         else {
             RR_Queue[i]=next;
@@ -167,33 +181,29 @@ int next_RR(){
     return next;
 }
 
-
-
-int sleep_queue[10];
-
-int sleep(){
+void sleep(){
     if(ALLTASK[tasknow]->period != 0)
         ALLTASK[tasknow]->sleeptime = ALLTASK[tasknow]->period;
-    else ALLTASK[tasknow]->sleeptime = 100000;
-    
+    else ALLTASK[tasknow]->sleeptime = 0xFFFF;
     schedule();
 }
-int wakeup(int id){
+
+void wakeup(int id){
     ALLTASK[id]->sleeptime=0;
     //schedule();
     myswitch(id);
 }
 
-int init_sleep_queue(){
+void init_sleep_queue(){
     int i =0;
-    for(i=1;i<10;i++) sleep_queue[i]= 0;
+    for(i=1;i<MAX_TASK_NUM;i++) sleep_queue[i]= 0;
 }
 void check_sleep_queue(int id){
     int i =0,j=0;
-    for(i=1;i<10;i++) 
+    for(i=1;i<MAX_TASK_NUM;i++) 
         if(sleep_queue[i]== id) break;
-    if(i==10){
-        for(j=1;j<10;j++) 
+    if(i==MAX_TASK_NUM){
+        for(j=1;j<MAX_TASK_NUM;j++) 
             if(sleep_queue[j] == 0 ){
                 sleep_queue[j] = id;
                 break;
@@ -202,9 +212,9 @@ void check_sleep_queue(int id){
 }
 void delete_sleep_queue(int id){
     int i =0,j =0;
-    for(j=1;j<10;j++) 
+    for(j=1;j<MAX_TASK_NUM;j++) 
         if(sleep_queue[j] == id) {
-            for(i = j;i<10;i++){
+            for(i = j;i<MAX_TASK_NUM;i++){
                 if(sleep_queue[i+1] != 0) 
                     sleep_queue[i]=sleep_queue[i+1];
                 else {

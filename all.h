@@ -35,22 +35,6 @@ int myTask7();int myTask8();
 
 
 
-struct task_struct
-{
-    unsigned long esp;
-    unsigned long ebp;
-    unsigned long idle;
-    unsigned long eflag;
-    long period;
-    long timer;
-    long usedtimer;
-    long sleeptime;  
-    unsigned long priority;
-    unsigned long deflag;
-    unsigned long taskStack[1024];
-}tsk_str;
-
-struct task_struct *ALLTASK[10];
 
 
 void put_char(char c, char color, int row, int col);

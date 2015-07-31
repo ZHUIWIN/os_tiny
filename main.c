@@ -1,10 +1,11 @@
 #include "all.h"
+#include "task.h"
 
 #include "mem.c"
 #include "semaphore.c"
 #include "printf.c"
-#include "task.c"
 #include "alltask.c"
+
 
 void clear_screen(void) {
 	int row, col;
@@ -106,23 +107,20 @@ int timer(){
     int tmp_row = row_now;
     int tmp_col = col_now;
     row_now = 0;col_now = 30;
-    printf_system("%2d%CPU ",100-(100*idle_count)/time_count );    
+    printf_system("%2d%CPU ",100-(100*idle_count)/time_count);    
     row_now = tmp_row; 
     col_now = tmp_col;
     //保存当前打印的地址，打印出CPU利用率
-    
     schedule();
 }
-void newtag(){}
+
 int myMain(void){
     int i = 0;
     MEM =  &_end+0x2000/sizeof(int);
     listaddr = MEM;
     init_mem();
     for(i=0;i<10;i++){
-        newtag();
         ALLTASK[i] = mymalloc(sizeof(tsk_str)/sizeof(int)+1);
-        newtag();
     }
 
     init_all();

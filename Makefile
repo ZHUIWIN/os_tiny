@@ -7,8 +7,8 @@ BOOTSECT_BIN=output/${BOOTSECT}.bin
 
 OS_OBJS=    output/start32.o \
             output/main.o \
+            output/task.o   \
 #            output/printf.o \
-#            output/task.o   \
 #            output/alltask.o
             
             
@@ -23,12 +23,14 @@ output/main.o: main.c
 output/start32.o: start32.S
 	gcc -c ${C_FLAGS} ${ASM_FLAGS} start32.S -o output/start32.o
 
+output/task.o: task.c
+	gcc -c ${C_FLAGS} task.c -o output/task.o
+
 #
 #output/printf.o: printf.c
 #	gcc -c ${C_FLAGS} printf.c -o output/printf.o
 
-#output/task.o: task.c
-#	gcc -c ${C_FLAGS} task.c -o output/task.o
+
 	
 #output/alltask.o: alltask.c
 #	gcc -c ${C_FLAGS} alltask.c -o output/alltask.o
