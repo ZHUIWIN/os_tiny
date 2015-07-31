@@ -1,3 +1,5 @@
+# os_tiny
+
 # Readme:
 ## 最终文档：
 >all.c      main.c    myOS.ld   Readme         start16.ld  task.c
@@ -33,4 +35,4 @@
 ###start32.S 
     32位保护模式
 ###task.c 
-    任务调度相关的函数
+    任务调度相关的func
