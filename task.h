@@ -9,9 +9,9 @@
 #define MAX_TASK_NUM 10
 
 extern int tasknow;
-extern unsigned long ptr2;
-extern unsigned long ptr3;
-extern unsigned long ptr4;
+unsigned long ptr2;
+unsigned long ptr3;
+unsigned long ptr4;
 
 struct task_struct
 {
