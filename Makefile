@@ -10,8 +10,8 @@ OS_OBJS=    output/start32.o \
             output/task.o   \
 			output/memory.o	\
 			output/semaphore.o\
-#            output/printf.o \
-#            output/alltask.o
+            output/printf.o \
+            output/alltask.o
             
             
 
@@ -34,15 +34,11 @@ output/memory.o: memory.c
 output/semaphore.o: semaphore.c
 	gcc -c ${C_FLAGS} semaphore.c -o output/semaphore.o
 
+output/printf.o: printf.c
+	gcc -c ${C_FLAGS} printf.c -o output/printf.o
 
-#
-#output/printf.o: printf.c
-#	gcc -c ${C_FLAGS} printf.c -o output/printf.o
-
-
-	
-#output/alltask.o: alltask.c
-#	gcc -c ${C_FLAGS} alltask.c -o output/alltask.o
+output/alltask.o: alltask.c
+	gcc -c ${C_FLAGS} alltask.c -o output/alltask.o
 
 
 

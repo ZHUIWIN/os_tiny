@@ -1,11 +1,12 @@
-#include "all.h"
+//#define printf printf_system
+
+#include "main.h"
 #include "task.h"
 #include "memory.h"
-#include "semaphore.h"
+#include "printf.h"
+#include "alltask.h"
 
 
-#include "printf.c"
-#include "alltask.c"
 
 
 void clear_screen(void) {
@@ -30,13 +31,11 @@ void put_chars(char *msg, char color, int *_row, int *_col){
 	char *ptr=msg;
 	char c;
 	int row, col;
-	
 	row = *_row;	col = *_col;
 	c = *ptr;
 	while (c!='\0'){
 	    if ( col==80 ) {	col = 0;	row ++;	}
 	    if ( row==25 ) row = 0;
-
 	    put_char(c, color, row, col++);	    
 	    c = *(++ptr);
 	}
@@ -108,7 +107,7 @@ int timer(){
     int tmp_row = row_now;
     int tmp_col = col_now;
     row_now = 0;col_now = 30;
-    printf_system("%2d%CPU ",100-(100*idle_count)/time_count);    
+    printf("%2d%CPU ",100-(100*idle_count)/time_count);    
     row_now = tmp_row; 
     col_now = tmp_col;
     //保存当前打印的地址，打印出CPU利用率
@@ -145,8 +144,8 @@ int myMain(void){
 
 	clear_screen();
 
-	printf_system("myMain:The test for printf!\n");
-	printf_system("%d \n",ALLTASK[3]->esp);
+	printf("myMain:The test for printf!\n");
+	printf("%d \n",ALLTASK[3]->esp);
 	//ALLTASK[1]->timer = 20;
 	//ALLTASK[4]->timer = 40;
 	

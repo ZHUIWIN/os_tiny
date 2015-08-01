@@ -1,4 +1,5 @@
-#include "all.h"
+#include "printf.h"
+
 void next_screen(void) {
 	int row, col;
 	unsigned short *ptr = (unsigned short *)VGA_BASE;
@@ -31,7 +32,7 @@ void int2char(int p_num,char * tochar){
     tochar[j++] = '\0';
 }
 
-void printf_system(const char *msg, ...){
+void printf(const char *msg, ...){
     va_list para;				    /* 定义保存函数参数的结构 */  
 	int paran_num = 0;			    	/* 纪录参数个数 */  
 	char *word;					    /* 存放取出的字符串参数 */  
@@ -86,7 +87,7 @@ void printf_system(const char *msg, ...){
     }
 }
 
-void printf_system1(const char *msg, ...){
+void printf1(const char *msg, ...){
     va_list para;				    /* 定义保存函数参数的结构 */  
 	int paran_num = 0;			    	/* 纪录参数个数 */  
 	char *word;					    /* 存放取出的字符串参数 */  
@@ -143,7 +144,7 @@ void printf_system1(const char *msg, ...){
 
 
 //右半屏输出
-void printf_system2(const char *msg, ...){
+void printf2(const char *msg, ...){
     va_list para;				    /* 定义保存函数参数的结构 */  
 	int paran_num = 0;			    	/* 纪录参数个数 */  
 	char *word;					    /* 存放取出的字符串参数 */  

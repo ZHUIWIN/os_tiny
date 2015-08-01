@@ -215,10 +215,12 @@ time_int:
     .globl enable_interupt
 enable_interupt:
     sti    
-    
+    ret
+	
     .globl disable_interupt
 disable_interupt:
-    sti    
+    cli
+	ret    
     
 /* ===== data =========================== */
 .data
